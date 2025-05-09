@@ -1,9 +1,10 @@
 #pragma once
 #include <iostream>
 #include <string>
+#include<vector>
 using namespace std;
 
-enum itemType {WEAPON, ARMOR, POTION, COLLECTABLE};
+enum itemType { WEAPON, ARMOR, POTION, COLLECTABLE };
 
 class Item {
 private:
@@ -40,7 +41,7 @@ public:
 
 class Potion : virtual public Item {
 private:
-	enum potionType {HEAL, ATTACK, DEFENSE};
+	enum potionType { HEAL, ATTACK, DEFENSE };
 	potionType type;
 	const int potionPower;
 	int numOfPotions;
@@ -58,16 +59,16 @@ public:
 	Collectable();
 	void useItem() override;
 };
-
-class Inventory : public Item {
+//i change this
+class Inventory {
 private:
-	Item* weapons = new Weapon;
-	Item* potions = new Potion[3];
-	Item* armors = new Armor;
-	Item* collectables = new Collectable;
+	vector<Item*>item;
 	const int inventorySize;
 public:
 	Inventory();
+	bool addItem(Item* item);
+	bool removeItem(string itemName);
+	void showInventory() const;
 	int getInventorySize() const;
 	~Inventory();
 };

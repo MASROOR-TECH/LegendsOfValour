@@ -23,7 +23,7 @@ public:
 	int getSize() const;
 };
 
-class Weapon : virtual public Item {
+class Weapon : public Item {
 private:
 	const int attack;
 public:
@@ -39,7 +39,7 @@ public:
 	void useItem() override;
 };
 
-class Potion : virtual public Item {
+class Potion : public Item {
 private:
 	enum potionType { HEAL, ATTACK, DEFENSE };
 	potionType type;
@@ -54,7 +54,7 @@ public:
 	void useItem() override;
 };
 
-class Collectable : virtual public Item {
+class Collectable : public Item {
 public:
 	Collectable();
 	void useItem() override;
@@ -67,6 +67,7 @@ private:
 public:
 	Inventory();
 	bool addItem(Item* item);
+	Item* getItem(string name);
 	bool removeItem(string itemName);
 	void showInventory() const;
 	int getInventorySize() const;

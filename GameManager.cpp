@@ -2,37 +2,7 @@
 #pragma once
 #include <string>
 
-namespace config {
-
-    // Default Player Stats for Warrior
-    const int warriorHealth = 120;
-    const int warriorMana = 30;
-    const int warriorAttack = 15;
-    const int warriorDefense = 10;
-    const int warriorLevel = 1;
-    const int warriorExperience = 0;
-
-    // Default Player Stats for Mage
-    const int mageHealth = 80;
-    const int mageMana = 100;
-    const int mageAttack = 10;
-    const int mageDefense = 5;
-    const int mageLevel = 1;
-    const int mageExperience = 0;
-
-    // Default Player Stats for Rogue
-    const int rogueHealth = 100;
-    const int rogueMana = 50;
-    const int rogueAttack = 12;
-    const int rogueDefense = 8;
-    const int rogueLevel = 1;
-    const int rogueExperience = 0;
-
-    // Shared Defaults
-    const int maxHealth = 200;
-    const int maxMana = 150;
-}
-
+using namespace std;
 void GameManager::mainMenu() {
     char choice;
     do {
@@ -75,11 +45,11 @@ void GameManager::startGame() {
         choice = _getch();
         switch (choice)
         {//The Default player stats is give later 
-        case '1': player = new Mage(); 
+        case '1': player = new Mage(name+"_Mage");
             break;
-        case '2': player = new Warrior();
+        case '2': player = new Warrior(name+"_Warrior");
             break;
-        case '3': player = new Rogue();
+        case '3': player = new Rogue(name+"_Rouge");
             break;
         default:
             cout << "\nInvalid choice! Try Again\n ";
@@ -117,16 +87,6 @@ void GameManager::startGame() {
     inventory->showInventory();
 }
 
-void GameManager::loadGame() {
-    cout << "Enter name of file: ";
-    string fileName;
-    fileName += ".txt";
-    ofstream file(fileName);
-    if (!file.is_open()) {
-        throw string("Error to open file");
-    }
-    
-}
 
 void GameManager::runGameLoop() {
     system("cls");
@@ -171,7 +131,7 @@ void GameManager::runGameLoop() {
         }
 
         // check if player is dead or won
-        if (player->getHealth() <= 0) {
+        if (isGameOver) {
             cout << "\nGame Over! You have died.\n";
             isRunning = false;
         }
@@ -184,37 +144,237 @@ void GameManager::runGameLoop() {
 
 
 void GameManager::showPlayerStats() const {
-    cout << "\033[1;36m" << "========= PLAYER STATS =========" << "\033[0m\n";
-
-    cout << "\033[1;33m" << "Name:          " << "\033[0m" << player->getName() << '\n';
-    cout << "\033[1;32m" << "Level:         " << "\033[0m" << player->getLevel() << '\n';
-    cout << "\033[1;31m" << "Health:        " << "\033[0m" << player->getHealth() << '\n';
-    cout << "\033[1;34m" << "Mana:          " << "\033[0m" << player->getMana() << '\n';
-    cout << "\033[1;35m" << "Attack Power:  " << "\033[0m" << player->getAttack() << '\n';
-    cout << "\033[1;36m" << "Defense:       " << "\033[0m" << player->getDefense() << '\n';
-    cout << "\033[1;33m" << "Experience:    " << "\033[0m" << player->getExperience() << '\n';
-    cout << "\033[1;36m" << "================================" << "\033[0m\n";
+    cout  << "========= PLAYER STATS =========" << "\n";
+    cout <<  "Name:          "  << player->getName() << '\n';
+    cout <<  "Level:         "  << player->getLevel() << '\n';
+    cout <<  "Health:        "  << player->getHealth() << '\n';
+    cout <<  "Mana:          "  << player->getMana() << '\n';
+    cout <<  "Attack Power:  "  << player->getAttack() << '\n';
+    cout <<  "Defense:       "  << player->getDefense() << '\n';
+    cout <<  "Experience:    "  << player->getExperience() << '\n';
+    cout << "================================" << "\n";
 }
 
 void GameManager::openInventory() {
     cout << "Inventory Displayed: " << endl;
     inventory->showInventory();
-    cout << "1. Use Item\n2. Equip Item\n3. Discard Item\n4. Exit\n";
+    cout << "1. Use Item\n2. Discard Item\n3. Exit\n";
     char choice = _getch(); 
     switch (choice) {
     case '1': useItem(); break;
-    case '2': equipItem(); break;
-    case '3': discardItem(); break;  //This function is not use due my fellow not make this function in Inventory but i can fix it
-    case '4': return;
+    case '2': discardItem(); break;  //This function is not use due my fellow not make this function in Inventory but i can fix it
+    case '3': return;
     default: cout << "Invalid choice.\n"; break;
     }
 }
-
 void GameManager::useItem() {
-    cout << "Select an item that you want to use: ";
+    cout << "\nEnter the name of the item you want to use: ";
     string useitem;
-    cin >> useitem;
+    cin.ignore();
+    getline(cin, useitem);
 
+    Item* item = inventory->getItem(useitem); // You need to define this method
+    if (item) {
+        item->useItem();  // Polymorphic call
+        cout << "Item used successfully!\n";
+    }
+    else {
+        cout << "Item not found in inventory.\n";
+    }
 }
-void GameManager::equipItem();
-void GameManager::discardItem();
+
+void GameManager::discardItem() {
+    cout << "\nEnter the name of the item you want to discard: ";
+    string itemName;
+    cin.ignore();
+    getline(cin, itemName);
+
+    bool success = inventory->removeItem(itemName); 
+    if (success) {
+        cout << "Item discarded successfully.\n";
+    }
+    else {
+        cout << "Item not found or cannot be discarded.\n";
+    }
+}
+
+
+//Function to check game is over or not
+bool GameManager::isGameOver() const { if (player->getHealth() <= 0) { return true; } else { return false; } }
+//Function to load game 
+void GameManager::loadGame() {
+    cout << "Enter name of file (without .txt): ";
+    string fileName;
+    cin >> fileName;
+    fileName += ".txt";
+
+    ifstream file(fileName);
+    if (!file.is_open()) {
+        cout << "Error opening file: " << fileName << endl;
+        return;
+    }
+
+    string name, classType;
+    int level, xp, health, mana, attack, defense;
+
+    getline(file, name);
+    getline(file, classType);
+    file >> level >> xp >> health >> mana >> attack >> defense;
+    characterType type;
+    // Create appropriate character
+    if (classType == "Warrior") {
+        player = new Warrior(name+"_Warrior");
+        player->setCharacterType(WARRIOR);
+    }
+    else if (classType == "Mage") {
+        player = new Mage(name+"_Mage");
+        player->setCharacterType(MAGE);
+    }
+    else if (classType == "Rogue") {
+        player = new Rogue(name+"_Rouge");
+        player->setCharacterType(ROGUE);
+    }
+    else {
+        cout << "Unknown class type in save file.\n";
+        return;
+    }
+
+    // Set player attributes
+    player->setLevel(level);
+    player->setExperience(xp);
+    player->setHealth(health);
+    player->setMana(mana);
+    player->setAttack(attack);
+    player->setDefense(defense);
+   
+    file.close();
+    cout << "Game loaded successfully!\n";
+
+    runGameLoop(); // Start the game
+}
+
+//Function to save the game 
+void GameManager::saveGame() const {
+    cout << "Enter name of file to save (without .txt): ";
+    string fileName;
+    cin >> fileName;
+    fileName += ".txt";
+
+    ofstream file(fileName);
+    if (!file.is_open()) {
+        cout << "Error creating file: " << fileName << endl;
+        return;
+    }
+
+    // Save basic player data
+    file << player->getName() << '\n';
+
+    // Assume you have a getType() that returns "Warrior", "Mage", or "Rogue"
+    int typeCode = player->getCharacterType(); // returns 1, 2, or 3
+
+    if (typeCode == 1) {
+        file << "Warrior" << '\n';
+    }
+    else if (typeCode == 2) {
+        file << "Mage" << '\n';
+    }
+    else if (typeCode == 3) {
+        file << "Rogue" << '\n'; // Fixed spelling here
+    }
+    else {
+        file << "Unknown" << '\n';
+    }
+
+    file << player->getLevel() << ' '
+        << player->getExperience() << ' '
+        << player->getHealth() << ' '
+        << player->getMana() << ' '
+        << player->getAttack() << ' '
+        << player->getDefense() << '\n';
+
+    file.close();
+    cout << "Game saved successfully as " << fileName << '\n';
+}
+//Quit game function 
+void GameManager::quitGame() {
+    char choice;
+    cout << "\nDo you want to save your game before quitting? (y/n): ";
+    choice = _getch();
+
+    if (choice == 'y' || choice == 'Y') {
+        saveGame();
+    }
+
+    cout << "\nThank you for playing Legends of Valor!\n";
+    cout << "Goodbye, brave hero!\n";
+}
+
+//Function to generate random enemy
+Enemy GameManager::generateRandomEnemy(string name) {
+    Enemy* enemy;
+    int randomChance = rand() % 100; // 0–99
+
+    if (randomChance < 25) { // 25% chance for rare
+        enemy->setName(name);
+        enemy->setHealth(150);
+        enemy->setAttack(40);
+        enemy->setDefense(25);
+        enemy->setRare(true);
+        cout << "\nA rare enemy appeared: " << enemy->getName() << "!\n";
+    }
+    else {
+        enemy->setName(name);
+        enemy->setHealth(80);
+        enemy->setAttack(20);
+        enemy->setDefense(10);
+        enemy->setRare(false);
+        cout << "\nAn enemy appeared: " << enemy->getName() << ".\n";
+    }
+    return *enemy;
+}
+
+//Function to start combat b/w enemy and player
+
+void GameManager::startCombat(Enemy& enemy) {
+    cout << "\nCombat Started with " << (enemy.getRare() ? "Rare Enemy: " : "Enemy: ") << enemy.getName() << " \n";
+
+    // Loop until one of them dies
+    while (player->getHealth() > 0 && enemy.getHealth() > 0) {
+        processTurn(enemy); // One full round: player + enemy
+    }
+
+    if (player->getHealth() <= 0) {
+        cout << "\nYou were defeated by " << enemy.getName() << "!\n";
+    }
+    else if (enemy.getHealth() <= 0) {
+        cout << "\nYou defeated " << enemy.getName() << "!\n";
+        player->setExperience(20); // Reward XP
+    }
+}
+
+void GameManager::processTurn(Enemy& enemy) {
+    char choice;
+    cout << "\nYour Turn:\n";
+    cout << "1. Attack\n";
+    cout << "2. Use Special Ability (40 Mana)\n";
+    cout << "Choice: ";
+    cin >> choice;
+
+    if (choice == '1') {
+        player->attackEnemy(enemy);
+    }
+    else if (choice == '2') {
+        player->useSpecialAbility(); // Polymorphic call
+    }
+    else {
+        cout << "Invalid input. Skipping turn.\n";
+    }
+
+    // Enemy Turn (if still alive)
+    if (enemy.getHealth() > 0) {
+        enemy.attackPlayer(*player);
+    }
+
+    cout << "\nPlayer HP: " << player->getHealth() << ", Mana: " << player->getMana() << endl;
+    cout << "Enemy HP: " << enemy.getHealth() << endl;
+}

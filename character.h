@@ -2,9 +2,10 @@
 #include <iostream>
 #include <string>
 #include "inventory.h"
+#include "enemy.h"
 using namespace std;
 
-enum characterType {WARRIOR, MAGE, ROGUE};
+enum characterType {WARRIOR = 1, MAGE, ROGUE};
 
 class Character {
 private:
@@ -12,9 +13,11 @@ private:
 	int level, experience, health, mana, attack, defense;
 	Inventory* inventory;
 	characterType type;
-	const int maxHealth, maxMana;
+	const int maxHealth = 100, minHealth = 0, maxMana = 100, minMana = 0;
 	static int playerCount;
 public:
+	Character();
+
 	virtual void useSpecialAbility() = 0;
 	void attackEnemy(Enemy&);
 
@@ -25,30 +28,32 @@ public:
 	void setHealth(int);
 	void setMana(int);
 	void setDefense(int);
+	void setCharacterType(characterType);
 
 	string getName() const;
 	int getLevel() const;
-	int getExperience(int) const;
-	int getAttack(int) const;
-	int getHealth(int) const;
-	int getMana(int) const;
-	int getDefense(int) const;
+	int getExperience() const;
+	int getAttack() const;
+	int getHealth() const;
+	int getMana() const;
+	int getDefense() const;
+	const int getCharacterType() const;
 };
 
 class Warrior : public Character {
 public:
-	Warrior();
+	Warrior(string);
 	void useSpecialAbility() override;
 };
 
 class Mage : public Character {
 public:
-	Mage();
+	Mage(string);
 	void useSpecialAbility() override;
 };
 
 class Rogue : public Character {
 public:
-	Rogue();
+	Rogue(string);
 	void useSpecialAbility() override;
 };

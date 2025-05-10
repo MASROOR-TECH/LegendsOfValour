@@ -10,7 +10,6 @@
 using namespace std;
 class GameManager
 {
-    
     Character* player;
     Inventory* inventory;
 public:
@@ -23,8 +22,7 @@ public:
   
    // // Exploration and Events
    void exploreMap();           // Move to new area and check for events
-   // void handleRandomEncounter();// Random chance of enemy or treasure
-
+   Item* generateRandomLoot();
    // // Combat
     void startCombat(Enemy& enemy);    // Turn-based battle system
     void processTurn(Enemy& enemy);                // Handle one turn of combat

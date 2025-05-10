@@ -1,7 +1,6 @@
 #include "GameManager.h"
 #pragma once
 #include <string>
-
 using namespace std;
 void GameManager::mainMenu() {
     char choice;
@@ -200,7 +199,7 @@ void GameManager::discardItem() {
 
 
 //Function to check game is over or not
-bool GameManager::isGameOver() const { if (player->getHealth() <= 0) { return true; } else { return false; } }
+bool GameManager::isGameOver() const { if (player->getHealth() <= 0 ) { return true;  player->setExperience(20);} else { return false; } }
 //Function to load game 
 void GameManager::loadGame() {
     cout << "Enter name of file (without .txt): ";
@@ -378,3 +377,63 @@ void GameManager::processTurn(Enemy& enemy) {
     cout << "\nPlayer HP: " << player->getHealth() << ", Mana: " << player->getMana() << endl;
     cout << "Enemy HP: " << enemy.getHealth() << endl;
 }
+
+
+void GameManager::exploreMap() {
+    // ====== FOREST PHASE ======
+    Arena forest("Darkwood Forest", FOREST, 1);
+    forest.describe();
+
+    for (int i = 1; i <= 2; ++i) {
+        cout << "\nForest Encounter " << i << " of 2\n";
+        Enemy enemy = generateRandomEnemy((i == 1 ? "Shadowroot Panther" : "Forest Howler"));  // Already handles normal/rare
+        startCombat(enemy);
+        if (isGameOver) return;
+    }
+
+    // Optional: Placeholder for Forest Boss
+    // Enemy forestBoss = generateForestBoss();
+    // startCombat(forestBoss);
+
+    // ====== CAVE PHASE ======
+    Arena cave("Echoing Caverns", CAVE, 2);
+    cave.describe();
+
+    for (int i = 1; i <= 3; ++i) {
+        cout << "\nCave Encounter " << i << " of 3\n";
+        Enemy enemy = generateRandomEnemy(i == 1 ? "Cave Crawler" :i == 2 ? "Stoneback Beetle" :"Lurking Ghoul");
+        startCombat(enemy);
+        if (isGameOver) return;
+    }
+
+    // Optional: Placeholder for Cave Boss
+    // Enemy caveBoss = generateCaveBoss();
+    // startCombat(caveBoss);
+
+    // ====== TOWN PHASE ======
+    Arena town("Forsaken Town", TOWN, 3);
+    town.describe();
+
+    cout << "\nTown Encounter 1 of 1\n"; 
+    Enemy enemy = generateRandomEnemy("Ghost of the Mayor");
+    startCombat(enemy);
+    if (isGameOver) return;
+
+    // Optional: Placeholder for Town Boss
+    // Enemy townBoss = generateTownBoss();
+    // startCombat(townBoss);
+
+    cout << "\nYou have cleared all areas. Prepare for boss battles!\n";
+}
+
+//function to generate random loot
+//Item* GameManager::generateRandomLoot() {
+//    int roll = rand() % 4;
+//    switch (roll) {
+//    case 0: return new Potion("Healing Elixir", 1);
+//    case 1: return new Weapon("Bronze Sword", 10);
+//    case 2: return new Armor("Wooden Shield", 8);
+//    case 3: return new Collectable("Ancient Coin", 1);
+//    default: return nullptr;
+//    }
+//}

@@ -18,11 +18,9 @@ public:
     void startGame();            // Initialize new game
     void loadGame();             // Load existing game from file
    void runGameLoop();          // Main in-game loop
-
-  
    // // Exploration and Events
    void exploreMap();           // Move to new area and check for events
-   Item* generateRandomLoot();
+  // Item* generateRandomLoot();
    // // Combat
     void startCombat(Enemy& enemy);    // Turn-based battle system
     void processTurn(Enemy& enemy);                // Handle one turn of combat
@@ -36,11 +34,5 @@ public:
     void saveGame() const;             // Write game state to file
     void quitGame();                   // Exit with optional save
     bool isGameOver() const;           // Check end condition
-
-   // // Optional Features
-   // void levelUpPlayer();              // Level up logic
-   // void battleHistoryLog() const;     // View past battles
-   // void finalScoreReport() const;     // Display end-of-game stats
-
 };
 

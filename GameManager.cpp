@@ -134,8 +134,6 @@ void GameManager::runGameLoop() {
             cout << "\nGame Over! You have died.\n";
             isRunning = false;
         }
-
-        // I can also add logic to check for game completion (boss win)
     }
 
 }
@@ -199,7 +197,7 @@ void GameManager::discardItem() {
 
 
 //Function to check game is over or not
-bool GameManager::isGameOver() const { if (player->getHealth() <= 0 ) { return true;  player->setExperience(20);} else { return false; } }
+bool GameManager::isGameOver() const { if (player->getHealth() <= 0 ) { return true;} else { return false; } }
 //Function to load game 
 void GameManager::loadGame() {
     cout << "Enter name of file (without .txt): ";
@@ -335,6 +333,8 @@ Enemy GameManager::generateRandomEnemy(string name) {
 //Function to start combat b/w enemy and player
 
 void GameManager::startCombat(Enemy& enemy) {
+    int xp = (enemy.getAttack() + enemy.getDefense() + enemy.getHealth()) / (2 * player->getLevel());
+    if (enemy.getRare()) { xp *= 1.5; }
     cout << "\nCombat Started with " << (enemy.getRare() ? "Rare Enemy: " : "Enemy: ") << enemy.getName() << " \n";
 
     // Loop until one of them dies
@@ -342,13 +342,14 @@ void GameManager::startCombat(Enemy& enemy) {
         processTurn(enemy); // One full round: player + enemy
     }
 
-    if (player->getHealth() <= 0) {
+    if (isGameOver()) {
         cout << "\nYou were defeated by " << enemy.getName() << "!\n";
     }
     else if (enemy.getHealth() <= 0) {
         cout << "\nYou defeated " << enemy.getName() << "!\n";
-        player->setExperience(20); // Reward XP
     }
+    cout << "You earn " << xp << "Experience" << "\n";
+    player->setExperience(xp);
 }
 
 void GameManager::processTurn(Enemy& enemy) {
@@ -437,3 +438,5 @@ void GameManager::exploreMap() {
 //    default: return nullptr;
 //    }
 //}
+
+

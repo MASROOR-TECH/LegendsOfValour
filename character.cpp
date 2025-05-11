@@ -1,7 +1,6 @@
 #include <iostream>
 #include <string>
 #include "character.h"
-#include "inventory.h"
 #include "enemy.h"
 using namespace std;
 
@@ -14,6 +13,7 @@ Character::Character() {
 	mana = 50;
 	level = 1;
 	experience = 0;
+	points = 30;
 }
 
 void Character::attackEnemy(Enemy& objEnemy) {
@@ -30,14 +30,31 @@ void Character::setName(string n) {
 	name = n;
 }
 void Character::setLevel(int l) {
-	if (l > 0 && l <= 10) {
+	if (l > level && l <= 10) {
+		int levelGain = l - level;
 		level = l;
+
+		// Increase stats with level-up
+		/*health += 10 * levelGain;
+		if (health > maxHealth) health = maxHealth;*/
+
+		mana += 5 * levelGain;
+		if (mana > maxMana) mana = maxMana;
+
+		attack += 3 * levelGain;
+		defense += 3 * levelGain;
+
+		cout << "\nLevel Up! You reached Level " << level << "!\n";
+		cout << "+10 Health, +5 Mana, +3 Attack, +3 Defense per level.\n";
+	}
+	else if (l <= level) {
+		cout << "Cannot set level lower than or equal to current level.\n";
 	}
 	else {
-		cout << "\nInvalid Player Level" << endl;
-		return;
+		cout << "Invalid level value.\n";
 	}
 }
+
 void Character::setExperience(int exp) {
 	if (exp >= 0 && exp <= 100) {
 		if (experience + exp >= 100) {
@@ -63,11 +80,14 @@ void Character::setAttack(int a) {
 	}
 }
 void Character::setHealth(int h) {
-	if (h >= 0 && h <= 100) {
+	if (h <= 0) {
+		health = 0;
+	}
+	else if (h <= 100) {
 		health = h;
 	}
 	else {
-		cout << "\nInvalid Player Health" << endl;
+		cout << "Invalid Player Health" << endl;
 		return;
 	}
 }
@@ -81,7 +101,7 @@ void Character::setMana(int m) {
 	}
 }
 void Character::setDefense(int d) {
-	if (d >= 0 && d <= 100) {
+	if (d >= 0) {
 		defense = d;
 	}
 	else {
@@ -137,8 +157,8 @@ const int Character::getCharacterType() const {
 //Warrior Class
 Warrior::Warrior(string n) : Character() {
 	setCharacterType(WARRIOR);
-	setAttack(27);
-	setDefense(20);
+	setAttack(25);
+	setDefense(10);
 	setName(n);
 }
 void Warrior::useSpecialAbility() {
@@ -153,7 +173,7 @@ void Warrior::useSpecialAbility() {
 Mage::Mage(string n) : Character() {
 	setCharacterType(MAGE);
 	setAttack(22);
-	setDefense(26);
+	setDefense(5);
 	setName(n);
 }
 void Mage::useSpecialAbility() {
@@ -168,7 +188,7 @@ void Mage::useSpecialAbility() {
 Rogue::Rogue(string n) : Character() {
 	setCharacterType(ROGUE);
 	setAttack(25);
-	setDefense(25);
+	setDefense(8);
 	setName(n);
 }
 void Rogue::useSpecialAbility() {

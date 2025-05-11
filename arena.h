@@ -5,24 +5,26 @@
 #include "inventory.h"
 #include "character.h"
 using namespace std;
-enum ArenaType{FOREST,CAVE,TOWN};
+
+enum arenaType{FOREST ,CAVE, TOWN};
+
 class Arena {
 private:
     string name;              
-    ArenaType type;            // FOREST, CAVE, TOWN
-    int difficultyLevel;       // Affects enemy stats or rarity chances
+    arenaType type;            // FOREST, CAVE, TOWN
+    static float difficultyLevel;
 public:
     Arena();                   // Default constructor
-    Arena(string name, ArenaType type, int difficulty);
+    Arena(string name, arenaType type, int difficulty);
 
     // Setters
     void setName(const string&);
-    void setType(ArenaType);
+    void setType(arenaType);
     void setDifficulty(int);
 
     // Getters
     string getName() const;
-    ArenaType getType() const;
+    arenaType getType() const;
     int getDifficulty() const;
 
     void describe() const;     

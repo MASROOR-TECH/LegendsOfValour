@@ -4,7 +4,7 @@
 #include "character.h"
 using namespace std;
 
-Enemy::Enemy(string n){
+Enemy::Enemy(string n) {
 	health = 100;
 	name = n;
 }
@@ -13,11 +13,15 @@ void Enemy::setName(string n) {
 	name = n;
 }
 void Enemy::setHealth(int h) {
-	if (h >= 0 && h <= 100) {
+	if (h <= 0) {
+		health = 0;
+	}
+	else if (h <= 100) {
 		health = h;
 	}
 	else {
 		cout << "Invalid Enemy Health" << endl;
+		return;
 	}
 }
 void Enemy::setAttack(int a) {
@@ -59,3 +63,11 @@ void Enemy::attackPlayer(Character& objCharacter) {
 		cout << endl << (attack - objCharacter.getDefense()) << " damage dealt to " << objCharacter.getName() << " by " << name << endl;
 	}
 }
+
+//void Enemy::setRare(bool isRare) { 
+//	this->isRare = isRare; 
+//}
+//
+//bool Enemy::getRare()const { 
+//	return isRare; 
+//}

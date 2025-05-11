@@ -1,17 +1,15 @@
 #pragma once
 #include <iostream>
 #include <string>
-#include "inventory.h"
 #include "enemy.h"
 using namespace std;
 
-enum characterType {WARRIOR = 1, MAGE, ROGUE};
-
+enum characterType { WARRIOR = 1, MAGE, ROGUE };
+class Enemy;
 class Character {
 private:
 	string name;
-	int level, experience, health, mana, attack, defense;
-	Inventory* inventory;
+	int level, experience, health, mana, attack, defense, points;
 	characterType type;
 	const int maxHealth = 100, minHealth = 0, maxMana = 100, minMana = 0;
 	static int playerCount;

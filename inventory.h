@@ -1,10 +1,14 @@
 #pragma once
 #include <iostream>
 #include <string>
+#include"character.h"
 #include<vector>
 using namespace std;
 
 enum itemType { WEAPON, ARMOR, POTION, COLLECTABLE };
+enum potionType { HEAL = 1, ATTACK, REVIVE };
+enum weaponType { SWORD = 1, AXE, WAND };
+enum armorType { BRONZE = 1, GOLD, DIAMOND };
 
 class Item {
 private:
@@ -12,8 +16,7 @@ private:
 	itemType type;
 	int value, size;
 public:
-	virtual void useItem() = 0;
-
+	virtual void useItem(Character& player) = 0;
 	void setName(string);
 	void setValue(int);
 	void setSize(int);
@@ -25,45 +28,50 @@ public:
 
 class Weapon : public Item {
 private:
-	const int attack;
+	 int attack;
+	 weaponType type;
 public:
-	Weapon();
-	void useItem() override;
+	Weapon(){}
+	Weapon(weaponType);
+	void useItem(Character& player) override;
+
 };
 
-class Armor : virtual public Item {
+class Armor : public Item {
 private:
-	const int defense;
+	 int defense;
+	 armorType type;
 public:
-	Armor();
-	void useItem() override;
+	Armor(){}
+	Armor(armorType);
+	void useItem(Character& player) override;
 };
 
 class Potion : public Item {
 private:
-	enum potionType { HEAL, ATTACK, DEFENSE };
 	potionType type;
-	const int potionPower;
+	int potionPower;
 	int numOfPotions;
+	const int maxPotions = 3;
 public:
-	Potion();
-
+	Potion(){}
+	Potion(potionType);
 	const int getPotionType() const;
-	void setPotionType(const int);
+	void setPotionType(int);
 
-	void useItem() override;
+	void useItem(Character& player) override;
 };
 
 class Collectable : public Item {
 public:
-	Collectable();
-	void useItem() override;
+	Collectable(){}
 };
-//i change this
+
 class Inventory {
 private:
 	vector<Item*>item;
-	const int inventorySize;
+	int inventorySize;
+	const int maxInventorySize = 80;
 public:
 	Inventory();
 	bool addItem(Item* item);
